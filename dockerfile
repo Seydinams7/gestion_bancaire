@@ -1,30 +1,23 @@
+# Choix de l'image officielle PHP avec Apache
 FROM php:8.2-apache
 
-# Installer les dépendances
-RUN apt-get update && apt-get install -y \
-    zip unzip curl git libzip-dev libpq-dev libonig-dev libxml2-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip mbstring bcmath
-
-# Activer mod_rewrite pour Laravel
+# Active mod_rewrite pour Laravel
 RUN a2enmod rewrite
 
-# Installer Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Installe les extensions PHP nécessaires (exemple: pdo_mysql)
+RUN docker-php-ext-install pdo pdo_mysql
 
-# Copier les fichiers du projet
+# Copie le code de ton projet dans le conteneur
 COPY . /var/www/html
 
-WORKDIR /var/www/html
+# Donne les bons droits
+RUN chown -R www-data:www-data /var/www/html
 
-# Donner les bons droits
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Change le docroot d'Apache vers /public
+RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# Installer les dépendances PHP (hors dev)
-RUN composer install --no-dev --optimize-autoloader
-
-# Expose port 80 (Apache)
+# Expose le port 80 (par défaut Apache)
 EXPOSE 80
 
-# Démarrage par défaut d'Apache (gère le serveur HTTP)
+# Commande de démarrage
 CMD ["apache2-foreground"]
-RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
