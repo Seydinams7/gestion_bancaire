@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: banque-laravel
+    env: docker
+    plan: free
+    buildCommand: ""
+    startCommand: "apache2-foreground"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        sync: false
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        value: dpg-xxxxx.oregon-postgres.render.com
+      - key: DB_PORT
+        value: 5432
+      - key: DB_DATABASE
+        value: banque_laravel
+      - key: DB_USERNAME
+        value: banque_laravel_user
+      - key: DB_PASSWORD
+        sync: false
+      - key: APP_DEBUG
+        value: true
