@@ -13,6 +13,12 @@ COPY . .
 
 RUN composer install --no-interaction
 
+RUN php artisan config:clear && php artisan cache:clear && php artisan config:cache
+
 EXPOSE 8000
+
+RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chmod -R 775 storage bootstrap/cache
+
 
 CMD php -S 0.0.0.0:8000 -t public
