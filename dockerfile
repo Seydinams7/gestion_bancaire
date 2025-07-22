@@ -2,7 +2,7 @@
 
 FROM php:8.2-cli
 
-# Install system dependencies
+# Installer les dépendances système
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
@@ -10,23 +10,26 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
+    curl \
+    libpq-dev
 
-# Install PHP extensions
+# Installer les extensions PHP, y compris PostgreSQL
+RUN docker-php-ext-install pdo_pgsql pgsql pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install Composer
+# Copier Composer depuis l'image officielle
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
+# Définir le répertoire de travail
 WORKDIR /var/www
 
-# Copy existing application
+# Copier le code source dans le conteneur
 COPY . .
 
-# Install dependencies
+# Installer les dépendances PHP via Composer
 RUN composer install --no-interaction
 
-# Expose port (if using built-in server)
+# Exposer le port 8000 pour php artisan serve
 EXPOSE 8000
 
-# Start the application
+# Lancer le serveur Laravel
 CMD php artisan serve --host=0.0.0.0 --port=8000
