@@ -20,5 +20,9 @@ EXPOSE 8000
 RUN chown -R www-data:www-data storage bootstrap/cache
 RUN chmod -R 775 storage bootstrap/cache
 
+RUN apt-get install -y openssl
+RUN docker-php-ext-install openssl
+
+
 
 CMD php -S 0.0.0.0:8000 -t public
