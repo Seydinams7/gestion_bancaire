@@ -1,26 +1,33 @@
 FROM php:8.2-cli
 
-# Install system dependencies
+# Extensions nécessaires
 RUN apt-get update && apt-get install -y \
-    libpng-dev libonig-dev libxml2-dev zip unzip git curl libpq-dev
+    libpng-dev libonig-dev libxml2-dev zip unzip git curl libpq-dev libzip-dev \
+    && docker-php-ext-install pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_pgsql pgsql mbstring exif pcntl bcmath
-
-# Install Composer
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
 COPY . .
 
-# Installer les dépendances Laravel
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+# Copie du .env
+COPY .env.example .env
 
-# Générer le cache de config (si nécessaire)
-RUN php artisan config:clear && php artisan config:cache
+# Install des dépendances Laravel
+RUN composer install --no-interaction --optimize-autoloader --no-dev
 
+# Génère la clé Laravel
+RUN php artisan key:generate
+
+# Run les migrations (⚠️ avec `--force` sinon Laravel refuse en prod)
+RUN php artisan migrate --force || true
+
+RUN chmod -R 775 storage bootstrap/cache
+
+# Expose le port
 EXPOSE 8000
 
-# Commande de démarrage
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Lancer le serveur Laravel (si tu n'utilises pas Apache/Nginx)
+CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
