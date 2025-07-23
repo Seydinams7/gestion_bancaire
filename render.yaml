@@ -1,0 +1,60 @@
+services:
+  - type: web
+    name: gestion-bancaire
+    env: php
+    buildCommand: composer install --no-dev --optimize-autoloader && php artisan config:cache && php artisan route:cache && php artisan view:cache
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_NAME
+        value: "Gestion Bancaire"
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        fromService:
+          type: web
+          name: gestion-bancaire
+          property: url
+      - key: APP_LOCALE
+        value: fr
+      - key: APP_FALLBACK_LOCALE
+        value: fr
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_HOST
+        fromDatabase:
+          name: gestion-bancaire-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: gestion-bancaire-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: gestion-bancaire-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: gestion-bancaire-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: gestion-bancaire-db
+          property: password
+      - key: MAIL_MAILER
+        value: smtp
+      - key: MAIL_HOST
+        value: smtp.mailtrap.io
+      - key: MAIL_PORT
+        value: 2525
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@gestion-bancaire.com
+      - key: MAIL_FROM_NAME
+        value: "Gestion Bancaire"
+
+databases:
+  - name: gestion-bancaire-db
+    databaseName: gestion_bancaire
+    user: laravel
+
