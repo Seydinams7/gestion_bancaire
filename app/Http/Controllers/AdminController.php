@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CompteValide;
 use App\Mail\CompteRejete;
+use App\Mail\CompteFerme;
+use App\Mail\FermetureRejetee;
 
 class AdminController extends Controller
 {
@@ -30,14 +32,19 @@ class AdminController extends Controller
     }
 
 // rejeter une ouverture
-    public function rejeterOuverture($id)
+    public function rejeterOuverture(Request $request, $id)
     {
+        $request->validate([
+            'raison_rejet' => 'required|string|max:500'
+        ]);
+
         $compte = CompteBancaire::findOrFail($id);
         $compte->statut = 'rejete';
+        $compte->raison_rejet = $request->raison_rejet;
         $compte->save();
 
-        Mail::to($compte->user->email)->send(new CompteRejete($compte));
-        return back()->with('success', 'Compte rejeté.');
+        Mail::to($compte->user->email)->send(new CompteRejete($compte, $request->raison_rejet));
+        return back()->with('success', 'Compte rejeté avec succès.');
     }
 
 
@@ -58,14 +65,19 @@ class AdminController extends Controller
         return back()->with('success', 'Fermeture validée.');
     }
 
-    public function rejeterFermeture($id)
+    public function rejeterFermeture(Request $request, $id)
     {
+        $request->validate([
+            'raison_rejet' => 'required|string|max:500'
+        ]);
+
         $compte = CompteBancaire::findOrFail($id);
         $compte->statut = 'actif';
+        $compte->raison_rejet_fermeture = $request->raison_rejet;
         $compte->save();
 
-        Mail::to($compte->user->email)->send(new FermetureRejetee($compte));
-        return back()->with('success', 'Demande rejetée.');
+        Mail::to($compte->user->email)->send(new FermetureRejetee($compte, $request->raison_rejet));
+        return back()->with('success', 'Demande de fermeture rejetée.');
     }
 
     public function transactions()

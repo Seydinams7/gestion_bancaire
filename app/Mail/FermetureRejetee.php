@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Mail;
 
 use App\Models\CompteBancaire;
@@ -11,15 +12,17 @@ class FermetureRejetee extends Mailable
     use Queueable, SerializesModels;
 
     public $compte;
+    public $raison;
 
-    public function __construct(CompteBancaire $compte)
+    public function __construct(CompteBancaire $compte, $raison = null)
     {
         $this->compte = $compte;
+        $this->raison = $raison;
     }
 
     public function build()
     {
-        return $this->subject('Rejet de votre demande de fermeture')
+        return $this->subject('Votre demande de fermeture de compte a été rejetée')
             ->view('emails.fermeture_rejetee');
     }
 }

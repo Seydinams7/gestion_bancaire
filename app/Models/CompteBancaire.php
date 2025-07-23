@@ -17,7 +17,7 @@ class CompteBancaire extends Model
     ];
 
     protected $fillable = [
-        'user_id', 'type_compte', 'solde', 'numero_compte', 'code_guichet', 'cle_rib'
+        'user_id', 'type_compte', 'solde', 'numero_compte', 'code_guichet', 'cle_rib', 'raison_rejet', 'raison_rejet_fermeture'
     ];
 
 
