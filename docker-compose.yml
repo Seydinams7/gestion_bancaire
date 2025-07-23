@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:80"
+    environment:
+      - APP_NAME=Gestion Bancaire
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=http://localhost:8000
+      - APP_LOCALE=fr
+      - APP_FALLBACK_LOCALE=fr
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=gestion_bancaire
+      - DB_USERNAME=laravel
+      - DB_PASSWORD=password
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=smtp.mailtrap.io
+      - MAIL_PORT=2525
+      - MAIL_FROM_ADDRESS=noreply@gestion-bancaire.com
+      - MAIL_FROM_NAME=Gestion Bancaire
+    depends_on:
+      - db
+    volumes:
+      - ./storage:/var/www/html/storage
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=gestion_bancaire
+      - POSTGRES_USER=laravel
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+
