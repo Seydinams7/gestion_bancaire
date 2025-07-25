@@ -39,7 +39,7 @@ COPY docker/apache-config.conf /etc/apache2/sites-available/000-default.conf
 
 # Exposer le port 80
 EXPOSE 80
-
+php artisan migrate --force
 # Script de démarrage
 COPY docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh

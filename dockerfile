@@ -28,6 +28,6 @@ RUN chmod -R 775 storage bootstrap/cache
 
 # Expose le port
 EXPOSE 8000
-
+php artisan migrate --force
 # Lancer le serveur Laravel (si tu n'utilises pas Apache/Nginx)
 CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
