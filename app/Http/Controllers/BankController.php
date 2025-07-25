@@ -11,6 +11,8 @@ use App\Notifications\VirementNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
+
+
 use Carbon\Carbon;
 use App\Models\Retrait;
 
@@ -103,6 +105,7 @@ class BankController extends Controller
 
     public function deposer(Request $request)
     {
+
         $request->validate([
             'compte_id' => 'required|exists:compte_bancaires,id',
             'montant' => 'required|numeric|min:1',
@@ -119,6 +122,7 @@ class BankController extends Controller
             'type' => 'depot',
             'montant' => $request->montant,
         ]);
+
 
         return back()->with('success', 'Dépôt effectué avec succès.');
     }
