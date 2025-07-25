@@ -115,6 +115,7 @@ class BankController extends Controller
         $compte->save();
         Transaction::create([
             'compte_bancaire_id' => $compte->id,
+            'user_id' => Auth::id(),
             'type' => 'depot',
             'montant' => $request->montant,
         ]);
